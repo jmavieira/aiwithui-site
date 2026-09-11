@@ -1,0 +1,9 @@
+{
+  // Static site for aiwithui.net, deployed with Cloudflare Workers static assets.
+  // `npm run build` produces ./dist, then `npx wrangler deploy` uploads it.
+  "name": "aiwithui-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
