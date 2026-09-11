@@ -21,8 +21,9 @@ single source of truth.
   which content type, and which views (dashboard, table, calendar) to render.
 - **The Studio.** A web app that projects the folder into a UI and hosts agent
   terminals. It never invents state — it reflects the files.
-- **Connectors.** Optional first-party integrations (Gmail, Notion) give the
-  agent read-only tools while the access token stays server-side.
+- **Connectors.** Optional first-party integrations — Gmail and Notion today,
+  with more on the way — give the agent read-only tools while the access token
+  stays server-side. A Pro feature (see [pricing](/pricing/)).
 - **The vault.** Credentials and connection tokens are encrypted at rest and
   kept out of Git and out of the agent's reach.
 

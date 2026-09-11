@@ -3,9 +3,9 @@ import Base from "../layouts/Base.astro";
 const features = [
   { icon: "🗂️", title: "Filesystem-native", body: "A project is just a folder of Markdown and JSON. Your agent reads and writes the same files a person does — no database, no lock-in." },
   { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, calendars and boards from a single manifest. Change the file, the UI updates." },
-  { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion once. The agent gets read-only tools; the access token stays server-side and is never exposed to it." },
+  { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
   { icon: "📦", title: "Self-host in one container", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates. Your data lives in a mounted volume you control." },
-  { icon: "👥", title: "Projects and people", body: "Run many projects side by side. Optional user management with an owner and per-user, per-project access — off until you turn it on." },
+  { icon: "👥", title: "Projects and people", body: "Optional sign-in with an owner and members is built in. Running many projects side by side, with per-user project access, is a Pro feature." },
   { icon: "🔐", title: "Encrypted vault", body: "Credentials and connection tokens are sealed with AES-256-GCM, kept out of Git and out of the agent's reach." },
 ];
 const steps = [
@@ -79,7 +79,7 @@ const steps = [
     <div class="container">
       <div class="section-head">
         <h2>Run it in a minute</h2>
-        <p>One public image, one compose file. Bring your own folder.</p>
+        <p>One public image, one compose file. Bring your own folder — free and self-hosted.</p>
       </div>
       <div class="getstarted">
         <pre><code>services:
@@ -88,13 +88,30 @@ const steps = [
     restart: unless-stopped
     network_mode: host
     environment:
-      AIUI_PROJECTS_DIR: /projects
+      AIUI_PROJECT: /project
     volumes:
-      - ./projects:/projects</code></pre>
+      - ./my-project:/project</code></pre>
         <p style="margin: 16px 0 0; color: var(--muted);">
-          Then open the Studio in your browser. Full setup, one-click updates and configuration are in the
-          <a href="/docs/getting-started/">getting-started guide</a>.
+          Then open the Studio in your browser. Full setup and one-click updates are in the
+          <a href="/docs/getting-started/">getting-started guide</a>. Running many projects at once is a
+          <a href="/pricing/">Pro feature</a>.
         </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="editions">
+    <div class="container">
+      <div class="section-head">
+        <h2>Free to self-host. Pro when you need more.</h2>
+        <p>
+          The core is open source (AGPL) and free forever. Pro unlocks multiple projects, browser tools
+          and first-party connectors with a license key — or let us host the whole thing for you, on your
+          own Claude or Codex subscription.
+        </p>
+      </div>
+      <div class="hero-cta" style="justify-content: center;">
+        <a class="btn btn-primary" href="/pricing/">See editions &amp; pricing</a>
       </div>
     </div>
   </section>

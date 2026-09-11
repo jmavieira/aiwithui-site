@@ -1,0 +1,127 @@
+---
+import Base from "../layouts/Base.astro";
+const tiers = [
+  {
+    name: "Community",
+    price: "Free",
+    tagline: "Self-host the full workspace. Open source.",
+    features: [
+      "Filesystem-native projects — Markdown & JSON, no lock-in",
+      "The Studio: dashboards, tables, calendars, boards",
+      "Embedded Claude Code / Codex agents in a real terminal",
+      "One project per deployment",
+      "Optional sign-in with an owner and members",
+      "Encrypted vault (AES-256-GCM)",
+      "One Docker image, one-click updates",
+    ],
+    note: "Licensed AGPL-3.0 — yours to run, modify, and self-host.",
+    cta: { label: "Get started", href: "/docs/getting-started/" },
+    featured: false,
+  },
+  {
+    name: "Pro",
+    price: "License key",
+    tagline: "Everything in Community, plus the paid features.",
+    features: [
+      "Multiple projects, with a switcher and per-user project access",
+      "Browser tools — an agent-driven browser",
+      "Secure credential login — the agent signs in to a site without ever seeing the password",
+      "First-party connectors: Gmail & Notion — more on the way",
+      "Unlock instantly with a license key; no phone-home",
+    ],
+    note: "Commercial license, on the same image — enter a key to unlock.",
+    cta: { label: "Get a license", href: "mailto:hello@aiwithui.net?subject=AI%20with%20UI%20Pro%20license" },
+    featured: true,
+  },
+  {
+    name: "Hosted",
+    price: "Coming soon",
+    tagline: "We run it for you. You bring your own agent.",
+    features: [
+      "Managed AI with UI — we handle hosting, updates and backups",
+      "Bring your own Claude or Codex subscription — you never pay us for model usage",
+      "Your projects on isolated, private infrastructure",
+      "All Pro features included",
+    ],
+    note: "In the works — tell us if you'd like early access.",
+    cta: { label: "Join the waitlist", href: "mailto:hello@aiwithui.net?subject=AI%20with%20UI%20hosted%20waitlist" },
+    featured: false,
+  },
+];
+---
+
+<Base title="Pricing — AI with UI" description="Free and open-source to self-host; Pro features and a managed hosted option when you need more.">
+  <section class="block">
+    <div class="container">
+      <div class="section-head">
+        <h1>Editions &amp; pricing</h1>
+        <p>The core is free and open source. Unlock Pro features with a license key, or let us host it for you.</p>
+      </div>
+      <div class="grid">
+        {
+          tiers.map((t) => (
+            <div class={t.featured ? "card tier featured" : "card tier"}>
+              <h3>{t.name}</h3>
+              <p class="price">{t.price}</p>
+              <p class="tagline">{t.tagline}</p>
+              <ul class="tier-features">
+                {t.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <p class="tier-note">{t.note}</p>
+              <a class={t.featured ? "btn btn-primary" : "btn btn-ghost"} href={t.cta.href}>
+                {t.cta.label}
+              </a>
+            </div>
+          ))
+        }
+      </div>
+      <p class="licensing-note">
+        Bringing your own agent means you use your existing Claude or Codex subscription — AI with UI
+        never resells model usage. Curious what's open source vs. commercial? See
+        <a href="https://github.com/jmavieira/ai-with-ui/blob/main/LICENSING.md">LICENSING.md</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tier {
+    display: flex;
+    flex-direction: column;
+  }
+  .price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 2px 0;
+  }
+  .tagline {
+    color: var(--muted, #666);
+    margin: 0 0 14px;
+  }
+  .tier-features {
+    margin: 0 0 16px;
+    padding-left: 1.1em;
+    display: grid;
+    gap: 7px;
+    flex: 1;
+  }
+  .tier-note {
+    color: var(--muted, #666);
+    font-size: 0.9rem;
+    margin: 0 0 16px;
+  }
+  .tier.featured {
+    border-color: var(--accent, #0aa17a);
+    box-shadow: 0 0 0 1px var(--accent, #0aa17a);
+  }
+  .tier .btn {
+    align-self: flex-start;
+  }
+  .licensing-note {
+    text-align: center;
+    color: var(--muted, #666);
+    margin-top: 28px;
+  }
+</style>
