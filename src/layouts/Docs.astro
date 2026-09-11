@@ -1,0 +1,31 @@
+---
+import Base from "./Base.astro";
+const { frontmatter } = Astro.props;
+const title = frontmatter?.title ? `${frontmatter.title} — AI with UI` : "Docs — AI with UI";
+const description = frontmatter?.description ?? "AI with UI documentation.";
+const pages = [
+  { href: "/docs/", label: "Overview" },
+  { href: "/docs/getting-started/", label: "Getting started" },
+  { href: "/docs/manifest-reference/", label: "Manifest reference" },
+  { href: "/docs/deployment/", label: "Deployment" },
+];
+const path = Astro.url.pathname.replace(/\/?$/, "/");
+---
+
+<Base title={title} description={description}>
+  <div class="container docs">
+    <aside class="docs-nav">
+      <h4>Documentation</h4>
+      {
+        pages.map((p) => (
+          <a href={p.href} aria-current={path === p.href ? "page" : undefined}>
+            {p.label}
+          </a>
+        ))
+      }
+    </aside>
+    <article class="prose">
+      <slot />
+    </article>
+  </div>
+</Base>
