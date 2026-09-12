@@ -28,6 +28,12 @@ const canonical = new URL(Astro.url.pathname, site).href;
           <span class="logo">AI</span>
           <span>AI with UI</span>
         </a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle-input" hidden />
+        <label for="nav-toggle" class="nav-toggle" aria-label="Toggle navigation menu">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </label>
         <nav class="nav-links">
           <a href="/#features">Features</a>
           <a href="/#how">How it works</a>
