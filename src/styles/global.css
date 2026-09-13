@@ -183,7 +183,14 @@ pre {
 
 /* Docs */
 .docs { display: grid; grid-template-columns: 220px 1fr; gap: 40px; padding: 36px 0 64px; align-items: start; }
-@media (max-width: 860px) { .docs { grid-template-columns: 1fr; } }
+@media (max-width: 860px) {
+  .docs { grid-template-columns: 1fr; gap: 20px; }
+  /* Stacked layout: the nav sits above the prose, so it must not stick and
+     overlap the content as you scroll. Higher specificity than the base
+     .docs-nav rule, which appears later in the stylesheet. */
+  .container.docs .docs-nav { position: static; top: auto; }
+  .container.docs .docs-nav h4 { margin-top: 0; }
+}
 .docs-nav { position: sticky; top: 76px; }
 .docs-nav h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 8px; }
 .docs-nav a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--muted); font-size: 14px; font-weight: 600; }
