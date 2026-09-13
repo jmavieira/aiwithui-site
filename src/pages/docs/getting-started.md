@@ -43,9 +43,9 @@ own data.
 
 ## Multiple projects (Pro)
 
-Serving several projects at once — with a project switcher and per-user project
-access — is a Pro feature. With a license, set `AIUI_PROJECTS_DIR` to a folder
-whose subdirectories are each a project (see [pricing](/pricing/)):
+Serving several projects at once — with a project switcher — is a Pro feature.
+With a license, set `AIUI_PROJECTS_DIR` to a folder whose subdirectories are each
+a project (see [pricing](/pricing/)):
 
 ```yaml
     environment:
@@ -61,8 +61,8 @@ whose subdirectories are each a project (see [pricing](/pricing/)):
 - **Connectors (Pro)** — set `AIUI_GOOGLE_CLIENT_ID` / `_SECRET` for Gmail, or
   connect Notion with a pasted integration token. Gmail and Notion today, with
   more connectors on the way.
-- **User management** — optional sign-in with an owner and members, from the
-  Studio's account menu. Per-user *project* access comes with Pro multi-project.
+- **Sign-in** — optionally protect the Studio with an owner account and password,
+  from the Studio's account menu. Off by default (open on your network).
 - **Pro license** — unlock multi-project, browser tools and connectors by
   entering a license key at `/license`. See [pricing](/pricing/).
 

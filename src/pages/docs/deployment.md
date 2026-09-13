@@ -57,7 +57,7 @@ Set two secrets in your environment (or your NAS's stack settings):
 Everything you care about is on mounted volumes, independent of the image:
 
 - `./projects` — your projects (and the seeded examples).
-- `./vault` — the encrypted store of users, credentials and connection tokens.
+- `./vault` — the encrypted store of the owner login, credentials and connection tokens.
 
 Updating or replacing the image never touches these.
 
@@ -81,9 +81,9 @@ An HTTPS origin is also what the OAuth connectors need for their redirect, so a
 proxy or overlay is the recommended way to reach the Studio from outside the
 LAN.
 
-## User management
+## Sign-in
 
-For a shared deployment, enable user management from the Studio's account menu:
-create an owner, and everyone then signs in. You can grant each member access to
-specific projects, and the owner-only controls (connections, credentials,
-updates) stay restricted.
+To keep a deployment private, enable sign-in from the Studio's account menu:
+create an owner account, and the Studio then requires signing in. It is off by
+default (the Studio is open to anyone who can reach it), and the owner-only
+controls (connections, credentials, updates) stay restricted either way.
