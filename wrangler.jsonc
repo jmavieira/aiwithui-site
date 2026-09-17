@@ -1,9 +1,24 @@
 {
-  // Static site for aiwithui.net, deployed with Cloudflare Workers static assets.
-  // `npm run build` produces ./dist, then `npx wrangler deploy` uploads it.
+  // aiwithui.net on Cloudflare Workers: static assets from ./dist, plus a tiny
+  // Worker (worker/index.js) that handles POST /api/contact for the support form.
+  // `npm run build` produces ./dist, then `npm run deploy` uploads both.
   "name": "aiwithui-site",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  // Email Workers binding used to deliver support-form submissions. The
+  // destination must be a verified destination address in Email Routing.
+  "send_email": [
+    {
+      "name": "CONTACT_EMAIL",
+      "destination_address": "info@aiwithui.net"
+    }
+  ],
+  "vars": {
+    "CONTACT_TO": "info@aiwithui.net",
+    "CONTACT_FROM": "noreply@aiwithui.net"
   }
 }

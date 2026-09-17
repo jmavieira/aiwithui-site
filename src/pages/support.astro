@@ -1,0 +1,122 @@
+---
+import Base from "../layouts/Base.astro";
+const topics = ["Question", "Support", "Bug report", "Pro license", "Hosted waitlist", "Other"];
+const contactEmail = "info@aiwithui.net";
+---
+
+<Base title="Support — AI with UI" description="Ask a question or get help with AI with UI. We reply by email.">
+  <section class="block">
+    <div class="container support">
+      <div class="section-head">
+        <h1>Get support or ask a question</h1>
+        <p>
+          Stuck on setup, found a bug, or wondering whether AI with UI fits your workflow? Send us a note
+          and we'll reply by email. You can also write to us directly at
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+        </p>
+      </div>
+
+      <form class="contact card" method="post" action="/api/contact" novalidate>
+        <div class="row">
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" required maxlength="120" autocomplete="name" />
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required maxlength="200" autocomplete="email" />
+          </label>
+        </div>
+        <label>
+          <span>Topic</span>
+          <select name="topic">
+            {topics.map((t) => <option value={t}>{t}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea name="message" required rows="7" maxlength="5000" placeholder="What can we help with? Include your setup (Docker, NAS, VM…) and any error text if it's a support request."></textarea>
+        </label>
+        <!-- Honeypot: hidden from people, filled in by naive bots. -->
+        <label class="hp" aria-hidden="true">
+          <span>Website</span>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Send message</button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .support .section-head { margin-bottom: 24px; }
+  .support h1 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.01em; margin: 0 0 10px; }
+  .contact { max-width: 720px; display: grid; gap: 16px; }
+  .contact .row { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 600px) { .contact .row { grid-template-columns: 1fr; } }
+  .contact label { display: grid; gap: 6px; }
+  .contact label span { font-size: 13px; font-weight: 650; color: var(--ink); }
+  .contact input, .contact select, .contact textarea {
+    width: 100%; padding: 10px 12px; font: inherit; font-size: 15px; color: var(--ink);
+    background: var(--bg); border: 1px solid var(--line-strong); border-radius: 10px;
+  }
+  .contact textarea { resize: vertical; min-height: 140px; }
+  .contact input:focus, .contact select:focus, .contact textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .contact .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .contact .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .contact .status { margin: 0; font-size: 14px; color: var(--muted); }
+  .contact .status.ok { color: var(--accent-ink); font-weight: 600; }
+  .contact .status.err { color: #b42318; font-weight: 600; }
+  .contact.sent .row, .contact.sent > label, .contact.sent button { display: none; }
+  .contact.sent .status { font-size: 16px; }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("form.contact")!;
+  const status = form.querySelector<HTMLElement>(".status")!;
+  const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+  const contactEmail = "info@aiwithui.net";
+
+  const show = (kind: "ok" | "err" | "", text: string) => {
+    status.className = `status ${kind}`.trim();
+    status.textContent = text;
+  };
+  const sent = () => {
+    form.classList.add("sent");
+    show("ok", "Thanks — your message is on its way. We'll reply by email.");
+  };
+
+  // Result of a no-JS submission (the Worker redirects back with a query flag).
+  const params = new URLSearchParams(location.search);
+  if (params.get("sent") === "1") sent();
+  else if (params.get("error")) show("err", `We couldn't send your message. Please email ${contactEmail} directly.`);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    button.disabled = true;
+    show("", "Sending…");
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        sent();
+      } else {
+        show("err", `${data.error || "Something went wrong."} You can also email ${contactEmail}.`);
+        button.disabled = false;
+      }
+    } catch {
+      show("err", `Network error — please try again or email ${contactEmail}.`);
+      button.disabled = false;
+    }
+  });
+</script>
