@@ -111,11 +111,11 @@ const contactEmail = "info@aiwithui.net";
       if (res.ok && data.ok) {
         sent();
       } else {
-        show("err", `${data.error || "Something went wrong."} You can also email ${contactEmail}.`);
+        show("err", `${data.error || "Something went wrong."} Please email ${contactEmail} instead.`);
         button.disabled = false;
       }
     } catch {
-      show("err", `Network error — please try again or email ${contactEmail}.`);
+      show("err", `Network error. Please try again or email ${contactEmail}.`);
       button.disabled = false;
     }
   });

@@ -96,7 +96,9 @@ async function handleContact(request, env) {
     await env.CONTACT_EMAIL.send(new EmailMessage(from, to, raw));
   } catch (err) {
     console.error("contact form: send failed", err);
-    return reply(502, { ok: false, error: "We couldn't send your message. Please email us directly." }, "/support/?error=send");
+    // Surface Cloudflare's reason (e.g. unverified destination) so misconfiguration is visible.
+    const reason = clean(err && err.message ? err.message : "", 200);
+    return reply(502, { ok: false, error: reason ? `We couldn't send your message (${reason}).` : "We couldn't send your message." }, "/support/?error=send");
   }
 
   return reply(200, { ok: true }, "/support/?sent=1");
