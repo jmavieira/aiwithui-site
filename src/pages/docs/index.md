@@ -6,7 +6,8 @@ description: What AI with UI is and how the pieces fit together.
 
 # AI with UI
 
-AI with UI is a self-hosted workspace where a **project is a folder of files** —
+AI with UI is a workspace — self-hosted, or [hosted by us](/docs/hosted/) —
+where a **project is a folder of files** —
 Markdown and JSON — that both a person and an AI agent can work in. A person
 uses the **Studio**, a clean web UI that renders the folder as dashboards,
 tables, calendars and boards. An agent (Claude Code or Codex) works in the same
@@ -34,4 +35,5 @@ and Git. The UI is a projection you can change at any time by editing the
 manifest; the data outlives any particular tool.
 
 Continue with the [getting-started guide](/docs/getting-started/), the
-[manifest reference](/docs/manifest-reference/), or [deployment](/docs/deployment/).
+[hosted service](/docs/hosted/), the [manifest reference](/docs/manifest-reference/),
+or [deployment](/docs/deployment/).

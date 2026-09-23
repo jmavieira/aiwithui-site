@@ -7,7 +7,9 @@ description: Run AI with UI in a container and open the Studio.
 # Getting started
 
 AI with UI ships as one public Docker image. You need Docker (or any container
-host — a NAS, a VM, a laptop).
+host — a NAS, a VM, a laptop). If you would rather not run anything, the
+[hosted service](/docs/hosted/) is the same Studio run by us; sign up there
+instead and skip this page.
 
 ## Run it
 

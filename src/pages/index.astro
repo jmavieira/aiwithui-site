@@ -4,7 +4,7 @@ const features = [
   { icon: "🗂️", title: "Filesystem-native", body: "A project is just a folder of Markdown and JSON. Your agent reads and writes the same files a person does — no database, no lock-in." },
   { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, calendars and boards from a single manifest. Change the file, the UI updates." },
   { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
-  { icon: "📦", title: "Self-host in one container", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates. Your data lives in a mounted volume you control." },
+  { icon: "📦", title: "Self-host, or let us host it", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates — or sign up for the hosted service and bring your own model key. Projects move between the two as one zip." },
   { icon: "🔑", title: "Sign-in and projects", body: "Optional owner sign-in keeps the Studio private on a shared network. Running many projects side by side, with a project switcher, is a Pro feature." },
   { icon: "🔐", title: "Encrypted vault", body: "Credentials and connection tokens are sealed with AES-256-GCM, kept out of Git and out of the agent's reach." },
 ];
@@ -18,15 +18,16 @@ const steps = [
 <Base>
   <section class="hero">
     <div class="container">
-      <span class="eyebrow">Self-hosted · agent-native workspace</span>
+      <span class="eyebrow">Self-hosted or hosted · agent-native workspace</span>
       <h1>One folder your AI agent and your UI both understand.</h1>
       <p class="lead">
         AI with UI turns a plain project folder into a live app — dashboards, tables and calendars
         rendered from your files — that a coding agent can drive from its terminal and a person can use
-        from the browser. Self-hosted, encrypted, and yours.
+        from the browser. Self-hosted or hosted, encrypted, and yours.
       </p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="/docs/getting-started/">Get started</a>
+        <a class="btn btn-primary" href="https://app.aiwithui.net/signup">Sign up for hosted</a>
+        <a class="btn btn-ghost" href="/docs/getting-started/">Self-host it</a>
         <a class="btn btn-ghost" href="/docs/">Read the docs</a>
       </div>
       <div class="hero-shot">
@@ -79,7 +80,7 @@ const steps = [
     <div class="container">
       <div class="section-head">
         <h2>Run it in a minute</h2>
-        <p>One public image, one compose file. Bring your own folder — free and self-hosted.</p>
+        <p>One public image, one compose file. Bring your own folder — free and self-hosted. Or skip the container entirely with the <a href="/docs/hosted/">hosted service</a>.</p>
       </div>
       <div class="getstarted">
         <pre><code>services:
@@ -103,15 +104,17 @@ const steps = [
   <section class="block" id="editions">
     <div class="container">
       <div class="section-head">
-        <h2>Free to self-host. Pro when you need more.</h2>
+        <h2>Free to self-host. Pro when you need more. Hosted when you'd rather not run it.</h2>
         <p>
           The core is free to self-host. Pro unlocks multiple projects, browser tools
-          and first-party connectors with a license key — or let us host the whole thing for you, on your
-          own Claude or Codex subscription.
+          and first-party connectors with a license key. The hosted service runs the whole thing for you,
+          Pro features included, on your own Anthropic or OpenAI API key — sign up, get approved, import your
+          projects.
         </p>
       </div>
       <div class="hero-cta" style="justify-content: center;">
         <a class="btn btn-primary" href="/pricing/">See editions &amp; pricing</a>
+        <a class="btn btn-ghost" href="https://app.aiwithui.net/signup">Sign up for hosted</a>
       </div>
     </div>
   </section>

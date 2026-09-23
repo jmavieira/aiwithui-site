@@ -108,6 +108,7 @@ img { max-width: 100%; height: auto; }
   border: 1px solid transparent; cursor: pointer;
 }
 .btn:hover { text-decoration: none; }
+.nav-links .nav-cta { color: var(--accent-ink); font-weight: 600; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: var(--accent-ink); }
 .btn-ghost { background: var(--surface); border-color: var(--line-strong); color: var(--ink); }
