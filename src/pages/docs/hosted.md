@@ -60,8 +60,28 @@ your data is never locked in.
 
 ## Your data
 
-Each workspace's secrets — passwords, model keys, connection tokens — are
-sealed with a key that exists only for that workspace. Deleting a workspace
-deletes its key, and with it everything sealed under it. Project files are
-stored as files, in the same format the self-hosted Studio uses, which is what
-makes the export above possible.
+Everything the hosted service stores for a workspace is **encrypted at rest**
+before it is written to the database, under a key that exists only for that
+workspace:
+
+- **Project files** — every record, document and attachment, sealed with
+  AES-256-GCM. The revision token the editor uses to detect conflicts is a
+  keyed digest, so it does not reveal whether a file equals a known document.
+- **Agent conversations** — the chat feed, the model conversation state, the
+  log and any queued message.
+- **Secrets** — passwords, model API keys, connection tokens and credential
+  vault entries.
+- **Sessions** — the database holds only a digest of each session id, so a
+  copy of it cannot be turned into a login.
+
+Each workspace's key is itself wrapped by one key for the deployment, kept
+outside the database. A backup, a database dump or a database console
+therefore yields no file, no conversation, no secret and no usable cookie.
+What stays readable is what lookups need: email addresses, workspace and
+project names, file paths and sizes, timestamps, and who owns what. The
+service itself can of course read your data while it serves you — this is
+encryption against access to the database, not against the service.
+
+Deleting a workspace deletes its key, and with it everything sealed under it.
+Project files are stored in the same format the self-hosted Studio uses, which
+is what makes [moving a project out](#moving-a-project-in-or-out) possible.

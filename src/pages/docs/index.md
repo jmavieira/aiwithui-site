@@ -25,8 +25,10 @@ single source of truth.
 - **Connectors.** Optional first-party integrations — Gmail and Notion today,
   with more on the way — give the agent read-only tools while the access token
   stays server-side. A Pro feature (see [pricing](/pricing/)).
-- **The vault.** Credentials and connection tokens are encrypted at rest and
-  kept out of Git and out of the agent's reach.
+- **Encryption at rest.** Everything the Studio stores in its database —
+  project files on the hosted service, agent conversations, credentials and
+  connection tokens — is sealed with AES-256-GCM under a key that exists only
+  for that workspace. Secrets are kept out of Git and out of the agent's reach.
 
 ## Why it's built this way
 

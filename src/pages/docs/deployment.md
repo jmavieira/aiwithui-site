@@ -57,7 +57,11 @@ Set two secrets in your environment (or your NAS's stack settings):
 Everything you care about is on mounted volumes, independent of the image:
 
 - `./projects` — your projects (and the seeded examples).
-- `./vault` — the encrypted store of the owner login, credentials and connection tokens.
+- `./vault` — the Studio's own store: the owner login, credentials, connection
+  tokens and agent conversations, all sealed with AES-256-GCM under
+  `AIUI_VAULT_KEY`. Your project files stay plain files in `./my-project`, by
+  design — that is what lets agents, editors and Git work on them — so encrypt
+  that volume at the disk level if the machine is shared.
 
 Updating or replacing the image never touches these.
 

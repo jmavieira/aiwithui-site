@@ -6,7 +6,7 @@ const features = [
   { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
   { icon: "📦", title: "Self-host, or let us host it", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates — or sign up for the hosted service and bring your own model key. Projects move between the two as one zip." },
   { icon: "🔑", title: "Sign-in and projects", body: "Optional owner sign-in keeps the Studio private on a shared network. Running many projects side by side, with a project switcher, is a Pro feature." },
-  { icon: "🔐", title: "Encrypted vault", body: "Credentials and connection tokens are sealed with AES-256-GCM, kept out of Git and out of the agent's reach." },
+  { icon: "🔐", title: "Encrypted at rest", body: "Everything the service stores is sealed with AES-256-GCM under a key that exists only for your workspace: project files, agent conversations, credentials and connection tokens. A copy of the database reveals none of it." },
 ];
 const steps = [
   { title: "Point it at a folder", body: "Give it a project directory. Existing Markdown notes and records just work." },
@@ -23,7 +23,7 @@ const steps = [
       <p class="lead">
         AI with UI turns a plain project folder into a live app — dashboards, tables and calendars
         rendered from your files — that a coding agent can drive from its terminal and a person can use
-        from the browser. Self-hosted or hosted, encrypted, and yours.
+        from the browser. Self-hosted or hosted, encrypted at rest, and yours.
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://app.aiwithui.net/signup">Sign up for hosted</a>
@@ -52,6 +52,21 @@ const steps = [
             </div>
           ))
         }
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="security">
+    <div class="container">
+      <div class="section-head">
+        <h2>Encrypted at rest, by default</h2>
+        <p>
+          Every workspace gets its own encryption key. Project files, agent conversations, credentials and
+          connection tokens are sealed with AES-256-GCM before they are written, and session ids are stored only
+          as digests. A backup, a database dump or an administrator's console yields no file, no conversation and
+          no usable login without the deployment's key. Self-hosting, that key is yours alone: set one variable
+          and nothing readable ever touches the disk. <a href="/docs/hosted/#your-data">How it works</a>
+        </p>
       </div>
     </div>
   </section>
