@@ -3,6 +3,15 @@ import "../styles/global.css";
 const { title = "AI with UI", description = "A filesystem-native workspace your AI agent and your UI share." } = Astro.props;
 const site = "https://aiwithui.net";
 const canonical = new URL(Astro.url.pathname, site).href;
+// AI with UI is a StartCut product; say so to search engines too.
+const structured = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "AI with UI",
+  url: site,
+  applicationCategory: "DeveloperApplication",
+  publisher: { "@type": "Organization", name: "StartCut", url: "https://startcut.dev/" },
+});
 ---
 
 <!doctype html>
@@ -20,6 +29,7 @@ const canonical = new URL(Astro.url.pathname, site).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={`${site}/og.png`} />
     <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={structured} />
   </head>
   <body>
     <header class="nav">
@@ -52,7 +62,7 @@ const canonical = new URL(Astro.url.pathname, site).href;
 
     <footer class="footer">
       <div class="container">
-        <span>© {new Date().getFullYear()} AI with UI</span>
+        <span>© {new Date().getFullYear()} AI with UI · Made by <a href="https://startcut.dev/" rel="noopener">StartCut</a></span>
         <span>
           <a href="/pricing/">Pricing</a> · <a href="/docs/">Docs</a> · <a href="/docs/getting-started/">Get started</a> · <a href="/support/">Support</a>
         </span>
