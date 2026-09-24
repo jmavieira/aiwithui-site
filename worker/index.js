@@ -1,13 +1,13 @@
 // Cloudflare Worker that fronts the static site (./dist via the ASSETS binding)
 // and adds one endpoint: POST /api/contact, which emails the support form to
-// the inbox configured in wrangler.jsonc using Cloudflare Email Workers.
+// CONTACT_TO through Resend (https://resend.com), with the visitor as Reply-To.
 //
-// Requirements (one-time, in the Cloudflare dashboard):
-//   1. Email Routing enabled for aiwithui.net.
-//   2. CONTACT_TO must be a verified destination address in Email Routing
-//      (or routed to one), otherwise send() is rejected.
-//   3. CONTACT_FROM must be an address on the routed domain.
-import { EmailMessage } from "cloudflare:email";
+// Requirements:
+//   1. RESEND_API_KEY set as a secret on the Cloudflare project (Settings ->
+//      Variables and Secrets); locally in .dev.vars.
+//   2. CONTACT_FROM on a domain verified in Resend (aiwithui.net is).
+//   3. CONTACT_TO must reach a real inbox: info@aiwithui.net is received by
+//      Cloudflare Email Routing, so it needs a routing rule forwarding it.
 
 const TOPICS = ["Question", "Support", "Bug report", "Pro license", "Hosted waitlist", "Other"];
 const LIMITS = { name: 120, email: 200, message: 5000 };
@@ -70,8 +70,8 @@ async function handleContact(request, env) {
 
   const to = env.CONTACT_TO;
   const from = env.CONTACT_FROM;
-  if (!to || !from || !env.CONTACT_EMAIL) {
-    console.error("contact form: CONTACT_TO / CONTACT_FROM / CONTACT_EMAIL binding not configured");
+  if (!to || !from || !env.RESEND_API_KEY) {
+    console.error("contact form: CONTACT_TO / CONTACT_FROM / RESEND_API_KEY not configured");
     return reply(500, { ok: false, error: "The contact form is not configured yet." }, "/support/?error=server");
   }
 
@@ -90,13 +90,19 @@ async function handleContact(request, env) {
     "",
   ].join("\n");
 
-  const raw = buildMime({ from, fromName: "AI with UI website", to, replyTo: email, subject, body, domain: from.split("@")[1] });
-
   try {
-    await env.CONTACT_EMAIL.send(new EmailMessage(from, to, raw));
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ from: `AI with UI website <${from}>`, to: [to], reply_to: email, subject, text: body }),
+    });
+    if (!res.ok) {
+      const detail = await res.json().catch(() => ({}));
+      throw new Error(detail.message || `Resend answered ${res.status}`);
+    }
   } catch (err) {
     console.error("contact form: send failed", err);
-    // Surface Cloudflare's reason (e.g. unverified destination) so misconfiguration is visible.
+    // Surface the provider's reason so misconfiguration is visible.
     const reason = clean(err && err.message ? err.message : "", 200);
     return reply(502, { ok: false, error: reason ? `We couldn't send your message (${reason}).` : "We couldn't send your message." }, "/support/?error=send");
   }
@@ -117,35 +123,4 @@ async function readFields(request) {
 // Single-line, header-safe string: strips CR/LF so nothing can inject headers.
 function clean(value, max) {
   return (value ?? "").toString().replace(/[\r\n]+/g, " ").trim().slice(0, max);
-}
-
-// Minimal RFC 5322 message with UTF-8 support, no external dependency.
-function buildMime({ from, fromName, to, replyTo, subject, body, domain }) {
-  const id = `<${crypto.randomUUID()}@${domain}>`;
-  return [
-    `From: ${encodeWord(fromName)} <${from}>`,
-    `To: <${to}>`,
-    `Reply-To: <${replyTo}>`,
-    `Subject: ${encodeWord(subject)}`,
-    `Date: ${new Date().toUTCString()}`,
-    `Message-ID: ${id}`,
-    "MIME-Version: 1.0",
-    "Content-Type: text/plain; charset=utf-8",
-    "Content-Transfer-Encoding: base64",
-    "",
-    base64(body).replace(/(.{76})/g, "$1\r\n"),
-    "",
-  ].join("\r\n");
-}
-
-// RFC 2047 encoded-word for non-ASCII header values; plain ASCII passes through.
-function encodeWord(text) {
-  return /^[\x20-\x7e]*$/.test(text) ? text : `=?utf-8?B?${base64(text)}?=`;
-}
-
-function base64(text) {
-  const bytes = new TextEncoder().encode(text);
-  let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
 }

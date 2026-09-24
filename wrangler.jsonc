@@ -9,14 +9,9 @@
     "directory": "./dist",
     "binding": "ASSETS"
   },
-  // Email Workers binding used to deliver support-form submissions. The
-  // destination must be a verified destination address in Email Routing.
-  "send_email": [
-    {
-      "name": "CONTACT_EMAIL",
-      "destination_address": "info@aiwithui.net"
-    }
-  ],
+  // Support-form submissions are sent through Resend (the same account the
+  // Studio uses). RESEND_API_KEY is a secret set on the Cloudflare project,
+  // never committed; locally it goes in .dev.vars.
   "vars": {
     "CONTACT_TO": "info@aiwithui.net",
     "CONTACT_FROM": "noreply@aiwithui.net"
