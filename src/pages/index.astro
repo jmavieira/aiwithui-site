@@ -2,11 +2,26 @@
 import Base from "../layouts/Base.astro";
 const features = [
   { icon: "🗂️", title: "Filesystem-native", body: "A project is just a folder of Markdown and JSON. Your agent reads and writes the same files a person does — no database, no lock-in." },
-  { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, calendars and boards from a single manifest. Change the file, the UI updates." },
+  { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, boards, timelines, calendars, photo galleries and maps from a single manifest. Change the file, the UI updates." },
   { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
   { icon: "📦", title: "Self-host, or let us host it", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates — or sign up for the hosted service and bring your own model key. Projects move between the two as one zip." },
   { icon: "🔑", title: "Sign-in and projects", body: "Optional owner sign-in keeps the Studio private on a shared network. Running many projects side by side, with a project switcher, is a Pro feature." },
   { icon: "🔐", title: "Encrypted at rest", body: "Everything the service stores is sealed with AES-256-GCM under a key that exists only for your workspace: project files, agent conversations, credentials and connection tokens. A copy of the database reveals none of it." },
+];
+const views = [
+  { img: "/screens/board.png", title: "Boards", body: "Work moving through stages, a column per status. Tasks, shortlists, applications." },
+  { img: "/screens/timeline.png", title: "Timelines", body: "Everything with a date, in order, with today marked and the past faded. Itineraries, events, visits." },
+  { img: "/screens/gallery.jpg", title: "Galleries", body: "Picture cards for things you recognise by sight. Places, restaurants, products, wardrobe." },
+  { img: "/screens/map.jpg", title: "Maps", body: "Records with coordinates on a map, numbered and listed, each one a click away." },
+  { img: "/screens/calendar.png", title: "Calendars", body: "Trips, itinerary items and events on one calendar, each type in its own colour." },
+  { img: "/screens/dashboard.png", title: "Dashboards", body: "Countdowns to what is next, spending against a budget, and the lists that need you." },
+];
+const controls = [
+  "Every value shown for what it is: money with its currency, dates in words, links, stars, photos, and linked records by name",
+  "Change the status from a dropdown and set a rating with a click",
+  "Tick checklist items right in the record",
+  "Log a visit — date, rating, spend, would you go back — in one short form",
+  "Every change saved safely: an edit made elsewhere in the meantime is never overwritten",
 ];
 const steps = [
   { title: "Point it at a folder", body: "Give it a project directory. Existing Markdown notes and records just work." },
@@ -21,8 +36,8 @@ const steps = [
       <span class="eyebrow">Self-hosted or hosted · agent-native workspace</span>
       <h1>One folder your AI agent and your UI both understand.</h1>
       <p class="lead">
-        AI with UI turns a plain project folder into a live app — dashboards, tables and calendars
-        rendered from your files — that a coding agent can drive from its terminal and a person can use
+        AI with UI turns a plain project folder into a live app — dashboards, tables, boards, timelines,
+        galleries and maps rendered from your files — that an AI agent keeps up to date and a person can use
         from the browser. Self-hosted or hosted, encrypted at rest, and yours.
       </p>
       <div class="hero-cta">
@@ -52,6 +67,51 @@ const steps = [
             </div>
           ))
         }
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="views">
+    <div class="container">
+      <div class="section-head">
+        <h2>Your data, shown the way it works</h2>
+        <p>
+          The agent picks the view that fits each kind of record, from the same files. Tables are always there
+          for sorting and totals; these come on top.
+        </p>
+      </div>
+      <div class="showcase">
+        {
+          views.map((v) => (
+            <figure class="shot">
+              <img src={v.img} alt={`${v.title} in the AI with UI Studio`} width="1806" height="1350" loading="lazy" />
+              <figcaption>
+                <strong>{v.title}</strong> {v.body}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="records">
+    <div class="container">
+      <div class="records">
+        <div class="records-copy">
+          <h2>Records you can act on</h2>
+          <p>
+            Each record opens as a page: its photo first, the key facts, buttons for its website, phone and map, and the
+            notes the agent keeps. And you don't need the agent for the small things.
+          </p>
+          <ul class="ticks">
+            {controls.map((c) => <li>{c}</li>)}
+          </ul>
+          <img class="checklist-shot" src="/screens/checklist.png" alt="A packing checklist ticked on a record page" width="1191" height="450" loading="lazy" />
+        </div>
+        <figure class="shot record-shot">
+          <img src="/screens/record.jpg" alt="A trip's record page with its photo, status, dates and budget" width="1191" height="1464" loading="lazy" />
+        </figure>
       </div>
     </div>
   </section>
