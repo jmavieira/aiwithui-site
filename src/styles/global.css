@@ -216,6 +216,11 @@ pre {
   border: 1px solid var(--line-strong); border-radius: var(--radius);
   box-shadow: 0 12px 36px rgba(20, 30, 40, 0.10); background: var(--surface);
 }
+.shot video {
+  display: block; width: 100%; height: auto; aspect-ratio: 1280 / 800;
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  box-shadow: 0 12px 36px rgba(20, 30, 40, 0.10); background: var(--surface);
+}
 .shot figcaption { color: var(--muted); font-size: 15px; margin-top: 10px; }
 .shot figcaption strong { color: var(--ink); }
 .records { display: grid; gap: 36px; grid-template-columns: 1fr 1fr; align-items: start; }

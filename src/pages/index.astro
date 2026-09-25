@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 const features = [
   { icon: "🗂️", title: "Filesystem-native", body: "A project is just a folder of Markdown and JSON. Your agent reads and writes the same files a person does — no database, no lock-in." },
-  { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, boards, timelines, calendars, photo galleries and maps from a single manifest. Change the file, the UI updates." },
+  { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, boards, timelines, calendars, checklists, priority matrices, photo galleries and maps from a single manifest. Change the file, the UI updates." },
   { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
   { icon: "📦", title: "Self-host, or let us host it", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates — or sign up for the hosted service and bring your own model key. Projects move between the two as one zip." },
   { icon: "🔑", title: "Sign-in and projects", body: "Optional owner sign-in keeps the Studio private on a shared network. Running many projects side by side, with a project switcher, is a Pro feature." },
@@ -16,9 +16,24 @@ const views = [
   { img: "/screens/calendar.png", title: "Calendars", body: "Trips, itinerary items and events on one calendar, each type in its own colour." },
   { img: "/screens/dashboard.png", title: "Dashboards", body: "Countdowns to what is next, spending against a budget, and the lists that need you." },
 ];
+const videos = [
+  {
+    src: "/videos/ai-with-ui-work.mp4",
+    poster: "/videos/ai-with-ui-work.jpg",
+    title: "Boards, a priority matrix and a checklist",
+    body: "Drag a task to another column and its status is saved. Overdue and upcoming dates are flagged, a matrix sorts work by importance and urgency, and the shopping list is ticked off aisle by aisle.",
+  },
+  {
+    src: "/videos/ai-with-ui-links.mp4",
+    poster: "/videos/ai-with-ui-links.jpg",
+    title: "Records that connect",
+    body: "Every record lists what links to it, with a timeline of the dated ones. Counts and totals are calculated from linked records, long records fold into sections, and a small line shows how a price changed.",
+  },
+];
 const controls = [
   "Every value shown for what it is: money with its currency, dates in words, links, stars, photos, and linked records by name",
-  "Change the status from a dropdown and set a rating with a click",
+  "Change the status from a dropdown, or drag a card to another column on a board",
+  "Set a rating with a click, and change a quantity with + and −",
   "Tick checklist items right in the record",
   "Log a visit — date, rating, spend, would you go back — in one short form",
   "Every change saved safely: an edit made elsewhere in the meantime is never overwritten",
@@ -65,6 +80,29 @@ const steps = [
               <h3>{f.title}</h3>
               <p>{f.body}</p>
             </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="in-action">
+    <div class="container">
+      <div class="section-head">
+        <h2>See it in action</h2>
+        <p>Two short tours of what's new, recorded in the Studio on example projects.</p>
+      </div>
+      <div class="showcase">
+        {
+          videos.map((v) => (
+            <figure class="shot">
+              <video controls muted playsinline preload="none" poster={v.poster} width="1280" height="800">
+                <source src={v.src} type="video/mp4" />
+              </video>
+              <figcaption>
+                <strong>{v.title}.</strong> {v.body}
+              </figcaption>
+            </figure>
           ))
         }
       </div>
