@@ -13,16 +13,35 @@ const TOPICS = ["Question", "Support", "Bug report", "Pro license", "Hosted wait
 const LIMITS = { name: 120, email: 200, message: 5000 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Sent with every response: HTTPS only, no framing, no sniffing, and a CSP
+// that fits the static site (its own scripts and styles; the inline JSON-LD
+// block is data, not script).
+const SECURITY_HEADERS = {
+  "strict-transport-security": "max-age=31536000; includeSubDomains",
+  "x-frame-options": "DENY",
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy": "camera=(), microphone=(), geolocation=()",
+  "content-security-policy":
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+};
+
+function withSecurityHeaders(response) {
+  const secured = new Response(response.body, response);
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) secured.headers.set(name, value);
+  return secured;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/contact") {
       if (request.method !== "POST") {
-        return new Response("Method not allowed", { status: 405, headers: { Allow: "POST" } });
+        return withSecurityHeaders(new Response("Method not allowed", { status: 405, headers: { Allow: "POST" } }));
       }
-      return handleContact(request, env);
+      return withSecurityHeaders(await handleContact(request, env));
     }
-    return env.ASSETS.fetch(request);
+    return withSecurityHeaders(await env.ASSETS.fetch(request));
   },
 };
 
@@ -38,10 +57,19 @@ async function handleContact(request, env) {
     return Response.redirect(new URL(redirectTo, request.url).href, 303);
   };
 
-  // Only accept same-origin posts (the form on /support/).
+  // Only accept same-origin posts from a browser on the form (/support/): a
+  // missing Origin is refused too, so scripts cannot skip the check.
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
+  if (!origin || origin !== new URL(request.url).origin) {
     return reply(403, { ok: false, error: "Cross-origin requests are not allowed." }, "/support/?error=origin");
+  }
+
+  // Per-client limit (Cloudflare's rate limiter), so the inbox and the email
+  // quota cannot be flooded.
+  if (env.CONTACT_LIMITER) {
+    const key = request.headers.get("cf-connecting-ip") || "unknown";
+    const { success } = await env.CONTACT_LIMITER.limit({ key });
+    if (!success) return reply(429, { ok: false, error: "Too many messages. Try again in a minute." }, "/support/?error=rate");
   }
 
   let fields;
