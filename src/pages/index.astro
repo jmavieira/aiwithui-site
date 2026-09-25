@@ -108,7 +108,7 @@ const steps = [
         {
           videos.map((v) => (
             <figure class="shot">
-              <video controls muted playsinline preload="none" poster={v.poster} width="1280" height="800">
+              <video controls playsinline preload="none" poster={v.poster} width="1280" height="800">
                 <source src={v.src} type="video/mp4" />
               </video>
               <figcaption>
