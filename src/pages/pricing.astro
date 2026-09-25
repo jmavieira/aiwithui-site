@@ -2,35 +2,22 @@
 import Base from "../layouts/Base.astro";
 const tiers = [
   {
-    name: "Community",
+    name: "Self-hosted",
     price: "Free",
-    tagline: "Self-host the full workspace.",
+    tagline: "The full workspace, on your own hardware.",
     features: [
       "Filesystem-native projects — Markdown & JSON, no lock-in",
       "The Studio: dashboards, tables, calendars, boards",
       "Embedded Claude Code / Codex agents in a real terminal",
-      "One project per deployment",
-      "Optional owner sign-in to keep the Studio private",
-      "Encrypted at rest: files, conversations and secrets sealed with AES-256-GCM under your own key",
-      "One Docker image, one-click updates",
-    ],
-    note: "Free to self-host on your own hardware.",
-    cta: { label: "Get started", href: "/docs/getting-started/" },
-    featured: false,
-  },
-  {
-    name: "Pro",
-    price: "License key",
-    tagline: "Everything in Community, plus the paid features.",
-    features: [
       "Multiple projects, with a project switcher",
       "Browser tools — an agent-driven browser",
       "Secure credential login — the agent signs in to a site without ever seeing the password",
-      "First-party connectors: Gmail & Notion — more on the way",
-      "Unlock instantly with a license key; no phone-home",
+      "First-party connectors: Gmail, Notion & Linear",
+      "Encrypted at rest: files, conversations and secrets sealed with AES-256-GCM under your own key",
+      "One Docker image, one-click updates",
     ],
-    note: "Commercial license, on the same image — enter a key to unlock.",
-    cta: { label: "Get a license", href: "mailto:hello@aiwithui.net?subject=AI%20with%20UI%20Pro%20license" },
+    note: "Every feature included, no license key.",
+    cta: { label: "Get started", href: "/docs/getting-started/" },
     featured: true,
   },
   {
@@ -44,21 +31,21 @@ const tiers = [
       "Multiple projects, members with their own logins, and first-party connectors included",
       "Move projects in or out as one zip — no lock-in",
     ],
-    note: "Sign up now; new workspaces are approved by hand, usually within a day.",
+    note: "Sign up, confirm your email, and your workspace is ready.",
     cta: { label: "Sign up for hosted", href: "https://app.aiwithui.net/signup" },
     featured: false,
   },
 ];
 ---
 
-<Base title="Pricing — AI with UI" description="Free to self-host; Pro features with a license key, or the hosted service where we run it for you.">
+<Base title="Pricing — AI with UI" description="Free to self-host with every feature, or the hosted service where we run it for you.">
   <section class="block">
     <div class="container">
       <div class="section-head">
         <h1>Editions &amp; pricing</h1>
-        <p>The core is free to self-host. Unlock Pro features with a license key, or sign up for the hosted service and let us run it.</p>
+        <p>Self-hosting is free, with every feature. Or sign up for the hosted service and let us run it.</p>
       </div>
-      <div class="grid">
+      <div class="grid tiers-grid">
         {
           tiers.map((t) => (
             <div class={t.featured ? "card tier featured" : "card tier"}>
@@ -92,6 +79,13 @@ const tiers = [
     display: flex;
     flex-direction: column;
   }
+  @media (min-width: 821px) {
+    .tiers-grid {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 880px;
+      margin: 0 auto;
+    }
+  }
   .price {
     font-size: 1.5rem;
     font-weight: 700;
@@ -106,6 +100,7 @@ const tiers = [
     padding-left: 1.1em;
     display: grid;
     gap: 7px;
+    align-content: start;
     flex: 1;
   }
   .tier-note {

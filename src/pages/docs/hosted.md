@@ -14,17 +14,15 @@ its own encryption key and its own projects.
 ## Signing up
 
 Go to [app.aiwithui.net/signup](https://app.aiwithui.net/signup), name your
-workspace, and choose the email and password of its owner account. New
-workspaces are **approved by hand** before they can be used, usually within a
-day; until then the page says so and you can sign out and come back. You will
-know it is ready when signing in opens the Studio instead of the waiting
-screen.
+workspace, and choose the email and password of its owner account. We send a
+link to that address: open it to confirm the email, and the workspace is ready
+to use.
 
 ## Bring your own model key
 
 The hosted service never resells model usage. Your agents run on **your own
-Anthropic or OpenAI API key**, which you add in **Settings → Models** once the
-workspace is approved: an org-wide key for everyone in the workspace, and
+Anthropic or OpenAI API key**, which you add in **Settings → Models** once
+you have confirmed your email: an org-wide key for everyone in the workspace, and
 optionally a personal key that takes precedence for your own sessions. The key
 is sealed with the workspace's encryption key and is never shown again.
 
