@@ -55,6 +55,8 @@ these fits its data. When asked to improve a project's views, consider them:
 | Things with a date or time (itinerary items, events, visits) | `timeline`, or a `calendar` (with `layers` to show several types together) |
 | Things best recognised by a picture (places, restaurants, products, wardrobe) | `gallery` |
 | Places with coordinates (`latitude`/`longitude`) | `map` |
+| Things worked through and ticked off (shopping items, to-dos, chores, packing) | `checklist`, grouped by aisle, week or area |
+| Things ranked two ways (importance × urgency, owner × status, aisle × status) | `matrix` |
 | Short lists read top to bottom | `list` |
 | Anything to compare, sort, group and total | `table` |
 
@@ -137,21 +139,82 @@ pill, `true`/`false` is Yes/No, ISO dates and date-times are written out, an
 `https` value is a link, `image`/`photo` fields are pictures, a number in a
 field like `price`/`amount`/`budget` is money when the record has a `currency`
 field (or the name ends in a currency, like `amountEur`), `*Minutes` numbers
-are durations, `rating` 0-5 is stars, and a field named after a record type
-whose value is one of its ids (`trip: berlin-week`) is a link to that record,
-shown by its title. `id` and `type` are not shown to people.
+are durations, `rating` 0-5 is stars, and a value that names another record,
+by its id or its title (`trip: berlin-week`, `list: weekly-shop-2026-09-15`,
+`person: Dimitrios Michalakos`), is a link to that record, shown by its title,
+whatever the field is called; a name two records share links to neither. A
+record's page lists, under "Linked here", every record whose fields name it or
+whose text links to its file, so link records to each other rather than
+repeating their details. A field that takes one of a few short values
+repeated across the type's records (`category`, `priority`, `sentiment`,
+`confidence`) is a coloured label, like `status`: done/confirmed/positive are
+green, pending/at-risk/medium are amber, blocked/overdue/negative are red,
+planned/open are blue; `high` is red for priority, urgency or risk but green
+for confidence. Dates that need attention are marked wherever they show: a
+due date (`due`, `dueDate`, `deadline`, `targetDate`, `followUp`,
+`nextReview`, `renewal`, `expires`, or any `next…` date such as
+`nextOneOnOne`) is "Overdue" once passed and "Today", "Tomorrow" or "In N
+days" within three days, and a `date`/`startAt` counts when the record is still
+`scheduled`, `planned` or open; records that are done, cancelled, bought, paid
+or otherwise closed are never flagged. Name due dates that way so they are
+noticed. On a record's page, a number that has changed over the record's
+history (a price, a goal's progress, a headcount) shows a small trend line from
+its earlier versions, so keep such values in fields and update them in place
+rather than logging each change in the text. `id` and `type` are not shown to
+people.
 
 Add a `fields` entry only to change that. Each key is optional:
 
 | Key | Values | Meaning |
 |---|---|---|
 | `label` | text | Column and field label. |
-| `format` | `text`, `longtext`, `number`, `money`, `percent`, `duration`, `date`, `datetime`, `boolean`, `status`, `rating`, `url`, `email`, `phone`, `image`, `ref`, `tags` | How the value is shown. |
+| `format` | `text`, `longtext`, `number`, `money`, `percent`, `duration`, `date`, `datetime`, `boolean`, `status`, `rating`, `url`, `email`, `phone`, `image`, `ref`, `tags`, `choice` | How the value is shown (`choice`: a coloured label). |
 | `hidden` | boolean | Not shown on record pages or as a column. |
 | `currency` | ISO code, e.g. `EUR` | money: a fixed currency. |
 | `currencyField` | fieldName | money: the field holding the currency code (default `currency`). |
-| `ref` | a type id | The value (or list of values) are ids of records of that type, shown by title and opened on click. |
+| `ref` | a type id | The value (or list of values) names records of that type, by id or title, shown by title and opened on click. Only needed when the link is not found on its own. |
 | `unit` | `minutes`, `hours`, `days` | duration: the unit of the number (default minutes). |
+| `colors` | map of value → `green`, `amber`, `red`, `blue`, `grey`, `purple` | status and label colours for this field's values, when the usual reading is wrong. |
+| `rollup` | object | The value is calculated from the records that link to this one (see below), not read from the file. |
+
+A calculated field (`rollup`) is worked out whenever the project loads, so it
+is always right and nobody maintains it: a list's item count and total, a
+person's next meeting, a trip's spend. It has `from` (the type of the records
+that link here), `via` (their field that names this record, by id or title),
+`aggregate` (`count`, `sum`, `average`, `min`, `max`, `earliest`, `latest`),
+and, except for `count`, `field` (the value to aggregate on those records; one
+link may be followed, as in `product.price`). `times` multiplies each value by
+another of their fields (a quantity), and `filters` (the dashboard filter
+shape) limits which records count.
+
+```yaml
+content:
+  types:
+    shopping-list:
+      fields:
+        itemCount:
+          rollup: { from: list-item, via: list, aggregate: count }
+        total:
+          rollup:
+            from: list-item
+            via: list
+            aggregate: sum
+            field: product.price
+            times: quantity
+            filters: [{ field: status, operator: not-equals, value: skipped }]
+    team-member:
+      fields:
+        nextOneOnOne:
+          rollup:
+            from: one-on-one
+            via: person
+            aggregate: earliest
+            field: date
+            filters: [{ field: status, operator: equals, value: scheduled }]
+```
+
+When a type has a calculated field, never write that field into its records:
+change the linked records instead, and the value follows.
 
 Keep presentation in `fields`; never add display keys to records or schemas.
 
@@ -174,11 +237,13 @@ required.
 | `label` | string | Sidebar label. |
 | `icon` | id | Optional. Unknown names fall back to the renderer's icon. Known: `calendar-days`, `folder-kanban`, `layout-dashboard`, `list-checks`, `map-pin`, `message-square`, `network`, `plane`, `receipt-text`, `search`, `target`, `users`. |
 | `source` | object | Exactly one of the three shapes below. No other keys. |
-| `renderer` | enum | `dashboard`, `calendar`, `document`, `list`, `table`, `board`, `timeline`, `gallery`, `map`, `graph`, `agent`. |
+| `renderer` | enum | `dashboard`, `calendar`, `document`, `list`, `table`, `board`, `timeline`, `gallery`, `map`, `checklist`, `matrix`, `graph`, `agent`. |
 | `columns` | array of fieldName | Optional. Plain strings only. Table columns in display order; for `board`, `list`, `gallery` and `timeline`, the fields shown on each card. |
 | `groupBy` | fieldName | Optional. A single field. Ignored when `organization` is present. For `board`, the field whose values are the columns (default `status`). |
 | `imageField` | fieldName | Optional. `gallery`, `board`, `list`: the field holding each card's picture (default: the first image field). |
 | `board` | object | Optional, `board` only: `lanes: [values]` sets the column order (default: a workflow order for common statuses). |
+| `checklist` | object | Optional, `checklist` only: `field` (default `status`), `steps: [values]` (the order a tap moves through; the last is done), `quantityField` (a +/- stepper; default `quantity` when records have one). |
+| `matrix` | object | Required for `matrix`: `rows` and `columns` (fieldNames), optional `rowOrder`/`columnOrder` (values). |
 | `map` | object | Optional, `map` only: `latitudeField`, `longitudeField` (default `latitude`/`lat` and `longitude`/`lng`/`lon`, or a `coordinates: "lat, lng"` field). |
 | `aggregates` | array | Optional. Table subtotals; see below. |
 | `organization` | object | Optional. See below. |
@@ -197,6 +262,17 @@ Studio behaviour by renderer (all record views need a `source: { type }`):
   `endField`), past days muted and today marked; good for itineraries and events.
 - `map`: records with coordinates on an OpenStreetMap map, numbered and
   listed under it. Records need latitude and longitude fields (see `map`).
+- `matrix`: a grid with a row per value of `matrix.rows` and a column per
+  value of `matrix.columns`, a card per record in its cell (`columns` sets the
+  card's fields). Rankings (critical, high, medium, low) run most pressing
+  first, statuses in workflow order; `rowOrder`/`columnOrder` override. For a
+  priority matrix: `matrix: { rows: importance, columns: urgency }`.
+- `checklist`: rows to tick off, grouped by `groupBy`. A tap moves a record's
+  `field` to its next step and saves it; done records sink to the bottom,
+  struck through, and can be hidden. A yes/no field is simply ticked. Without
+  `steps`, the steps are the values in use in workflow order, with the
+  finishing value (`done`, `bought`, `packed`…) last; values like `skipped` or
+  `cancelled` are left out. List the statuses as an `enum` in the schema.
 - `calendar`, `dashboard`, `document`, `agent`: see their sections.
 - `graph` is accepted by the schema but not shown yet (a warning says so); do
   not use it.
@@ -330,13 +406,20 @@ source:
   type: trip                      # id of a content type; must exist in content.types
   filters:                        # optional
     - field: status               # fieldName
-      operator: in                # equals | not-equals | in | not-in
+      operator: in                # equals | not-equals | in | not-in | before | after | within-days
       value: [planned, booked]    # string, number, boolean, or a non-empty list of those
   sort:                           # optional
     - field: startDate            # fieldName
       direction: asc              # asc | desc
   limit: 6                        # optional integer >= 1
 ```
+
+Date filters compare a date field with today: `before`/`after` take `today`
+or a date (`{ field: due, operator: before, value: today }` is overdue),
+`within-days` takes a number of days ahead (`{ field: due, operator:
+within-days, value: 7 }` is due this week). A record without that date never
+matches. They work in `rollup` filters too. For an "Overdue" metric, count
+the open records whose due date is before today, with `tone: attention`.
 
 ### `calendar`
 
