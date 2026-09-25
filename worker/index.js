@@ -57,8 +57,9 @@ async function handleContact(request, env) {
     return Response.redirect(new URL(redirectTo, request.url).href, 303);
   };
 
-  // Only accept same-origin posts from a browser on the form (/support/): a
-  // missing Origin is refused too, so scripts cannot skip the check.
+  // Only accept same-origin posts (the form on /support/); a missing Origin is
+  // refused too. This stops other sites posting through a visitor's browser;
+  // a script can still send any Origin, which the rate limit below handles.
   const origin = request.headers.get("origin");
   if (!origin || origin !== new URL(request.url).origin) {
     return reply(403, { ok: false, error: "Cross-origin requests are not allowed." }, "/support/?error=origin");
@@ -129,10 +130,9 @@ async function handleContact(request, env) {
       throw new Error(detail.message || `Resend answered ${res.status}`);
     }
   } catch (err) {
+    // The provider's reason goes to the log, not to the visitor.
     console.error("contact form: send failed", err);
-    // Surface the provider's reason so misconfiguration is visible.
-    const reason = clean(err && err.message ? err.message : "", 200);
-    return reply(502, { ok: false, error: reason ? `We couldn't send your message (${reason}).` : "We couldn't send your message." }, "/support/?error=send");
+    return reply(502, { ok: false, error: "We couldn't send your message." }, "/support/?error=send");
   }
 
   return reply(200, { ok: true }, "/support/?sent=1");
