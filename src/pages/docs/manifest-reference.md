@@ -218,6 +218,24 @@ change the linked records instead, and the value follows.
 
 Keep presentation in `fields`; never add display keys to records or schemas.
 
+### Record text
+
+A record's Markdown text is for what no field and no linked record says: its
+purpose, the decisions and their reasons, open questions, notes from a
+conversation. Keep it short and current:
+
+- Do not list or tabulate linked records in the text (the bookings of a trip,
+  the items of a list, a person's one-on-ones). The record's page already
+  shows every record that links to it under "Linked here", with a timeline of
+  the dated ones; link each child to its parent with a field instead.
+- Do not copy facts that live in fields or in linked records (times, prices,
+  statuses); they go stale in the text. Update the field.
+- Replace what changed rather than appending a log of changes; file history
+  keeps the old versions.
+- Use `##` sections. A long record's page shows an outline and folds its
+  sections, starting folded those that are only links or very long.
+
+
 People can also change some values right on a record's page, without the
 editor: they set a `rating` (1-5 stars), pick the `status` (from the schema's
 `enum` for `status`, else the values the type already uses), switch yes/no
@@ -255,7 +273,11 @@ required.
 Studio behaviour by renderer (all record views need a `source: { type }`):
 
 - `table`: rows and columns, with search, sorting, organization and aggregates.
-- `board`: a column per value of `groupBy` (default `status`), with a card per record.
+- `board`: a column per value of `groupBy` (default `status`), with a card per
+  record. People move a card to another column (drag and drop, or a "Move to"
+  picker on touch screens), which saves the record with that column's value;
+  the columns include every value the schema's `enum` allows, so list the
+  statuses there.
 - `list`: one card per record.
 - `gallery`: picture cards (the record's image field), for places, products, people.
 - `timeline`: records in date order under day headings (`startField`, optional
