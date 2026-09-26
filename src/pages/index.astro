@@ -2,13 +2,15 @@
 import Base from "../layouts/Base.astro";
 const features = [
   { icon: "🗂️", title: "Filesystem-native", body: "A project is just a folder of Markdown and JSON. Your agent reads and writes the same files a person does — no database, no lock-in." },
-  { icon: "🖥️", title: "A UI over your files", body: "The Studio renders the folder as dashboards, tables, boards, timelines, calendars, checklists, priority matrices, photo galleries and maps from a single manifest. Change the file, the UI updates." },
+  { icon: "🖥️", title: "A UI over your files", body: "Your agent keeps the folder up to date; the Studio shows it as dashboards, tables, boards, timelines, calendars, checklists, rankings, side-by-side comparisons, photo galleries and maps, from a single manifest the agent writes. Change a file, the UI updates." },
   { icon: "🔌", title: "First-party connectors", body: "Connect Gmail or Notion — with more connectors on the way. The agent gets read-only tools; the access token stays server-side, never exposed to it. (Pro)" },
   { icon: "📦", title: "Self-host, or let us host it", body: "One Docker image on a NAS, a VM, or a laptop, with one-click updates — or sign up for the hosted service and bring your own model key. Projects move between the two as one zip." },
   { icon: "🔑", title: "Sign-in and projects", body: "Optional owner sign-in keeps the Studio private on a shared network. Running many projects side by side, with a project switcher, is a Pro feature." },
   { icon: "🔐", title: "Encrypted at rest", body: "Everything the service stores is sealed with AES-256-GCM under a key that exists only for your workspace: project files, agent conversations, credentials and connection tokens. A copy of the database reveals none of it." },
 ];
 const views = [
+  { img: "/screens/ranking.jpg", title: "Rankings", body: "The options your agent researched, scored on what matters to you. Move a weight and the order changes. Cars, flats, laptops, offers." },
+  { img: "/screens/compare.jpg", title: "Side by side", body: "Two to four of them compared field by field, with the best value in each row marked." },
   { img: "/screens/board.png", title: "Boards", body: "Work moving through stages, a column per status. Tasks, shortlists, applications." },
   { img: "/screens/timeline.png", title: "Timelines", body: "Everything with a date, in order, with today marked and the past faded. Itineraries, events, visits." },
   { img: "/screens/gallery.jpg", title: "Galleries", body: "Picture cards for things you recognise by sight. Places, restaurants, products, wardrobe." },
@@ -56,6 +58,7 @@ const videos = [
 ];
 const controls = [
   "Every value shown for what it is: money with its currency, dates in words, links, stars, photos, and linked records by name",
+  "Values worked out from what the agent wrote: totals from linked records, formulas like € per km of range, and price or range bands",
   "Change the status from a dropdown, or drag a card to another column on a board",
   "Set a rating with a click, and change a quantity with + and −",
   "Tick checklist items right in the record",
@@ -76,8 +79,8 @@ const steps = [
       <h1>One folder your AI agent and your UI both understand.</h1>
       <p class="lead">
         AI with UI turns a plain project folder into a live app — dashboards, tables, boards, timelines,
-        galleries and maps rendered from your files — that an AI agent keeps up to date and a person can use
-        from the browser. Self-hosted or hosted, encrypted at rest, and yours.
+        rankings, comparisons, galleries and maps rendered from your files — that an AI agent keeps up to date
+        and a person can use from the browser. Self-hosted or hosted, encrypted at rest, and yours.
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://app.aiwithui.net/signup">Sign up for hosted</a>

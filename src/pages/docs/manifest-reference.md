@@ -57,6 +57,7 @@ these fits its data. When asked to improve a project's views, consider them:
 | Places with coordinates (`latitude`/`longitude`) | `map` |
 | Things worked through and ticked off (shopping items, to-dos, chores, packing) | `checklist`, grouped by aisle, week or area |
 | Things ranked two ways (importance × urgency, owner × status, aisle × status) | `matrix` |
+| Options to choose between (cars, flats, laptops, offers) | `ranking` (a weighted score, weights adjustable on the page) and `compare` (two to four side by side) |
 | Short lists read top to bottom | `list` |
 | Anything to compare, sort, group and total | `table` |
 
@@ -160,8 +161,11 @@ or otherwise closed are never flagged. Name due dates that way so they are
 noticed. On a record's page, a number that has changed over the record's
 history (a price, a goal's progress, a headcount) shows a small trend line from
 its earlier versions, so keep such values in fields and update them in place
-rather than logging each change in the text. `id` and `type` are not shown to
-people.
+rather than logging each change in the text. A date that records when
+something was last checked (`checkedAt`, `verifiedAt`, `lastChecked`,
+`reviewedAt`…) is marked "N days old" once it is more than 30 days old (set
+`staleAfterDays` to change that, or to mark any other date). `id` and `type`
+are not shown to people.
 
 Add a `fields` entry only to change that. Each key is optional:
 
@@ -176,6 +180,11 @@ Add a `fields` entry only to change that. Each key is optional:
 | `unit` | `minutes`, `hours`, `days` | duration: the unit of the number (default minutes). |
 | `colors` | map of value → `green`, `amber`, `red`, `blue`, `grey`, `purple` | status and label colours for this field's values, when the usual reading is wrong. |
 | `rollup` | object | The value is calculated from the records that link to this one (see below), not read from the file. |
+| `formula` | text | The value is calculated from the record's own fields, e.g. `price / rangeKm` (see below). |
+| `round` | 0-6 | formula: decimal places to round the result to. |
+| `bins` | object | The value is the range a number falls in, e.g. price bands (see below). |
+| `better` | `higher`, `lower` | For `compare` and `ranking`: which way is better (a lower price, a longer range). |
+| `staleAfterDays` | number | A date that should be recent: marked "N days old" once older than this. |
 
 A calculated field (`rollup`) is worked out whenever the project loads, so it
 is always right and nobody maintains it: a list's item count and total, a
@@ -213,8 +222,34 @@ content:
             filters: [{ field: status, operator: equals, value: scheduled }]
 ```
 
-When a type has a calculated field, never write that field into its records:
-change the linked records instead, and the value follows.
+A `formula` is worked out from the record's own fields (calculated fields
+included, rollups first): numbers, field names (one link may be followed, as
+in `product.price`), `+ - * / %`, parentheses, and `min(…)`, `max(…)`,
+`abs(x)`, `round(x, places)`, `floor(x)`, `ceil(x)` and `days(dateField)`
+(days from today, negative when past). A missing or non-numeric field, or a
+division by zero, leaves the value empty. `bins` gives the range a number
+falls in: `field` (a number, or a formula), ascending `edges`, and optional
+`labels` (one more than the edges); the labels are generated otherwise
+("Under €20,000", "€20,000–€25,000", "€25,000 and over", as money when the
+field is). A bins field is a label like any other: group a `matrix` or a
+`board` by it, filter on it. A field is one of `rollup`, `formula` or `bins`,
+never two.
+
+```yaml
+content:
+  types:
+    car:
+      fields:
+        price: { format: money, currency: EUR, better: lower }
+        rangeKm: { better: higher }
+        eurosPerKm: { formula: "price / rangeKm", round: 1, format: money, currency: EUR, better: lower }
+        priceBand: { bins: { field: price, edges: [20000, 25000] } }
+        checkedAt: { staleAfterDays: 14 }
+```
+
+When a type has a calculated field (rollup, formula or bins), never write that
+field into its records: change the fields or linked records it is worked out
+from instead, and the value follows.
 
 Keep presentation in `fields`; never add display keys to records or schemas.
 
@@ -255,13 +290,14 @@ required.
 | `label` | string | Sidebar label. |
 | `icon` | id | Optional. Unknown names fall back to the renderer's icon. Known: `calendar-days`, `folder-kanban`, `layout-dashboard`, `list-checks`, `map-pin`, `message-square`, `network`, `plane`, `receipt-text`, `search`, `target`, `users`. |
 | `source` | object | Exactly one of the three shapes below. No other keys. |
-| `renderer` | enum | `dashboard`, `calendar`, `document`, `list`, `table`, `board`, `timeline`, `gallery`, `map`, `checklist`, `matrix`, `graph`, `agent`. |
-| `columns` | array of fieldName | Optional. Plain strings only. Table columns in display order; for `board`, `list`, `gallery` and `timeline`, the fields shown on each card. |
+| `renderer` | enum | `dashboard`, `calendar`, `document`, `list`, `table`, `board`, `timeline`, `gallery`, `map`, `checklist`, `matrix`, `compare`, `ranking`, `graph`, `agent`. |
+| `columns` | array of fieldName | Optional. Plain strings only. Table columns in display order; for `board`, `list`, `gallery` and `timeline`, the fields shown on each card; for `compare`, the rows compared. |
 | `groupBy` | fieldName | Optional. A single field. Ignored when `organization` is present. For `board`, the field whose values are the columns (default `status`). |
 | `imageField` | fieldName | Optional. `gallery`, `board`, `list`: the field holding each card's picture (default: the first image field). |
 | `board` | object | Optional, `board` only: `lanes: [values]` sets the column order (default: a workflow order for common statuses). |
 | `checklist` | object | Optional, `checklist` only: `field` (default `status`), `steps: [values]` (the order a tap moves through; the last is done), `quantityField` (a +/- stepper; default `quantity` when records have one). |
 | `matrix` | object | Required for `matrix`: `rows` and `columns` (fieldNames), optional `rowOrder`/`columnOrder` (values). |
+| `ranking` | object | Required for `ranking`: `criteria`, a list of `{ field, weight, better? }` (numeric fields; weights are relative; `better` defaults to the field's, else higher). |
 | `map` | object | Optional, `map` only: `latitudeField`, `longitudeField` (default `latitude`/`lat` and `longitude`/`lng`/`lon`, or a `coordinates: "lat, lng"` field). |
 | `aggregates` | array | Optional. Table subtotals; see below. |
 | `organization` | object | Optional. See below. |
@@ -289,6 +325,16 @@ Studio behaviour by renderer (all record views need a `source: { type }`):
   card's fields). Rankings (critical, high, medium, low) run most pressing
   first, statuses in workflow order; `rowOrder`/`columnOrder` override. For a
   priority matrix: `matrix: { rows: importance, columns: urgency }`.
+- `compare`: people pick two to four records and see them side by side, a
+  row per field (`columns`, else every shown field), with the best value in
+  each row marked for fields with `better`. The records chosen are remembered
+  in that person's browser.
+- `ranking`: every record scored 0-100 on `ranking.criteria`: each criterion's
+  values are scaled across the records (best = 1, following `better`), and the
+  score is their weighted average. People adjust the weights with sliders on
+  the page (remembered in their browser, with a reset to the manifest's), and
+  rejected or cancelled records can be hidden. A record missing a value is
+  scored on the criteria it has.
 - `checklist`: rows to tick off, grouped by `groupBy`. A tap moves a record's
   `field` to its next step and saves it; done records sink to the bottom,
   struck through, and can be hidden. A yes/no field is simply ticked. Without
@@ -428,7 +474,7 @@ source:
   type: trip                      # id of a content type; must exist in content.types
   filters:                        # optional
     - field: status               # fieldName
-      operator: in                # equals | not-equals | in | not-in | before | after | within-days
+      operator: in                # equals | not-equals | in | not-in | before | after | within-days | older-than-days
       value: [planned, booked]    # string, number, boolean, or a non-empty list of those
   sort:                           # optional
     - field: startDate            # fieldName
@@ -439,7 +485,9 @@ source:
 Date filters compare a date field with today: `before`/`after` take `today`
 or a date (`{ field: due, operator: before, value: today }` is overdue),
 `within-days` takes a number of days ahead (`{ field: due, operator:
-within-days, value: 7 }` is due this week). A record without that date never
+within-days, value: 7 }` is due this week), and `older-than-days` a number of
+days back (`{ field: checkedAt, operator: older-than-days, value: 14 }` needs
+checking again). A record without that date never
 matches. They work in `rollup` filters too. For an "Overdue" metric, count
 the open records whose due date is before today, with `tone: attention`.
 
@@ -517,6 +565,9 @@ laptop needs `npm install -g chrome-devtools-mcp` and a Chrome install.
 | `view.organization.duplicate-option` | Two options share an id. |
 | `view.dashboard.unknown-source` | A dashboard source names a type missing from `content.types`. |
 | `view.dashboard.duplicate-id` | Two dashboard items share an id. |
+| `field.formula.invalid` | A `formula` does not parse, or uses its own field. |
+| `field.bins.invalid` | `bins.edges` do not go up, or `bins.labels` is not one longer than the edges. |
+| `field.derived.conflict` | A field has more than one of `rollup`, `formula`, `bins`. |
 | `context.missing` | An `agentContext` root does not exist. |
 | `record.schema` | A record's frontmatter fails its JSON Schema. |
 | `record.unreachable` | A record is not linked from any agent context root. |
